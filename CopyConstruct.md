@@ -67,8 +67,9 @@ int main(int argc, char ** argv) {
     // 其指向的内容并不会被复制
     TestMyString(sayHello);
 
-    MyString ohterStr = sayHello;
-    MyString ohterStr2 = sayHello;
+    // 这样定义时，也会调用拷贝构造函数，因为创建了新对象
+    MyString otherStr = sayHello;
+    MyString otherStr2 = sayHello;
 
     return 0;
 }
