@@ -75,3 +75,44 @@ int main(int argc, char ** argv) {
 }
 
 ```
+通常，在单例设计模式中，将默认构造函数设置为私有，拷贝构造函数设置为私有，赋值运算符函数设置为私有。
+```c++
+#include <iostream>
+
+class Singleton {
+public:
+    // 由于是静态变量，所以能够作为引用返回
+    static Singleton& GetInstance() {
+        static Singleton onlyInstance;
+        return onlyInstance;
+    }
+
+    std::string GetName() {
+        return name;
+    }
+
+    void SetName(std::string name) {
+        this->name = name;
+    }
+
+private:
+    std::string name;
+
+    // 默认构造函数为私有，禁止直接创建
+    Singleton() {};
+    // 默认拷贝构造函数为私有
+    Singleton(const Singleton& s);
+    // 默认赋值操作函数
+    const Singleton& operator=(const Singleton&);
+};
+
+int main(int argc, char ** argv) {
+    Singleton& single = Singleton::GetInstance();
+    single.SetName("Factory");
+    std::cout << "single name: " << single.GetName() << '\n';
+
+    Singleton& anotherSingle = Singleton::GetInstance();
+    std::cout << "anotherSingle name: " << anotherSingle.GetName() << '\n';
+    return 0;
+}
+```
