@@ -42,6 +42,7 @@ public:
     MonsterDB() {}
 
     static void Destroy(MonsterDB *pInstance) {
+        // 成员函数可以调用private方法，所以能够调用private的析构函数
         delete pInstance;
     }
 
