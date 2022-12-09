@@ -131,3 +131,21 @@ int main() {
     return 0;
 }
 ```
+### 可变参数模板
+可变参数模板以两种方式使用省略号。 在参数名称的左侧，表示“参数包”，在参数名称的右侧，将参数包扩展为单独的名称。
+```c++
+// 捕获参数包s
+void print_strings(std::convertible_to<std::string_view> auto&& ...s)
+{
+  // 拓展参数包s,相当于以逗号分隔
+  for (auto v : std::initializer_list<std::string_view>{ s... })
+    std::cout << v << " ";
+  std::cout << std::endl;
+}
+
+int
+main()
+{
+  print_strings("one", std::string{"two"});
+}
+```
