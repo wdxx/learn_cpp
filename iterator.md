@@ -22,5 +22,74 @@ struct my_iterator_traits<IterT*> {
 #### 随机迭代器
 随机迭代器可以通过跳跃的方式访问容器中的任意数据。它具有双向迭代器的所有功能
 
+#### 让自定义的类可以迭代
+事实上要想进行迭代，一个类需要满足以下条件：
+（1）拥有 begin 和 end 函数，返回值是一个可以自己定义的迭代器，分别指向第一个元素和最后一个元素。既可以是成员函数，也可以是非成员函数。
+（2）迭代器本身支持 *、++、!= 运算符，既可以是成员函数，也可以是非成员函数。
+```c++
+#include <stdlib.h>
+#include <iostream>  
+using namespace std;
+
+class IntVector {
+	//迭代器类
+	class Iter {
+	public:
+		Iter(IntVector* p_vec, int pos):_pos(pos),_p_vec(p_vec){}
+
+		// these three methods form the basis of an iterator for use with range-based for loop  
+		bool operator!= (const Iter& other) const
+		{
+			return _pos != other._pos;
+		}
+
+		// this method must be defined after the definition of IntVector,since it needs to use it  
+		int& operator*() const
+		{
+			return _p_vec->get(_pos);
+		}
+
+		const Iter& operator++ ()
+		{
+			++_pos;
+			return *this;
+		}
+
+	private:		
+		IntVector *_p_vec;
+		int _pos;
+	};
+
+public:
+	IntVector(){}
+	Iter begin(){
+		return Iter(this,0);
+	}
+	Iter end(){
+		return Iter(this, 20);
+	}
+	int& get(int col){
+		return data[col];
+	}
+	void set(int index, int val){
+		data[index] = val;
+	}
+private:
+	int data[20] = {0};
+};
+
+
+int main(){
+	IntVector v;
+	for (int i = 0; i < 20; i++){
+		v.set(i, i);
+	}
+	for (int& i : v) { i = i*i; cout << i <<" "; }
+	system("pause");
+}
+
+```
+输出： `0 1 4 9 16 25 36 49 64 81 100 121 144 169 196 225 256 289 324 361`
 #### 参考
 1. https://blog.csdn.net/lihao21/article/details/55043881
+2. https://blog.csdn.net/K346K346/article/details/57403750
