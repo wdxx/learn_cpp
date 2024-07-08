@@ -149,3 +149,42 @@ main()
   print_strings("one", std::string{"two"});
 }
 ```
+### 可变参数模板与初始化列表
+可以使用可变参数模板与初始化列表返回一个变长列表。
+```c++
+template < typename T >
+std::string make_string( const T& val )
+{
+    std::stringstream ss;
+    ss << val;
+    return ss.str();
+}
+
+template < typename ... ARGS >
+std::vector< std::string > make_string_list( ARGS&& ... args )
+{
+    std::vector< std::string > v;
+    std::string s;
+    std::initializer_list< int >{
+        (
+            s = make_string( args ),
+            std::clog << "Adding: '" << args << "' [" << typeid( args ).name() << "]",
+            v.push_back( s ),
+            std::clog << " done - verify: '" << v.back() << "'\n",
+            0) ...
+    };
+    return v;
+}
+
+int main()
+{
+    auto l = make_string_list( "Hello", ',', std::string{ " world: " }, 42, 3.1415 );
+```
+上面代码编译后输出如下：
+```bash
+Adding: 'Hello' [char const [6]] done - verify: Hello
+Adding: ',' [char] done - verify: ,
+Adding: ' world: ' [class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >] done - verify:  world:
+Adding: '42' [int] done - verify: 42
+Adding: '3.1415' [double] done - verify: 3.1415
+```
